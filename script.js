@@ -64,6 +64,7 @@ function createPeice(type) {
 }
 
 function arenaSweep(){
+  let rowCount = 1
   outer: for (let y = arena.length -1; y>0; y--){
     for (let x = 0;x<arena[y].length;x++){
       if (arena[y][x] == 0){
@@ -73,6 +74,8 @@ function arenaSweep(){
     const row = arena.splice(y,1)[0].fill(0)
     arena.unshift(row)
     y++
+    player.score += rowCount*10
+    rowcount *=2
   }
 }
 
@@ -85,6 +88,8 @@ function playerReset() {
   player.pos.y = 0;
   if (collide(arena, player)) {
     alert("game over");
+    player.score = 0
+    updateScore()
     arena.forEach((row) => row.fill(0));
   }
 }
@@ -138,6 +143,7 @@ function playerDrop() {
     merge(arena, player);
     playerReset();
     arenaSweep();
+    updateScore();
   }
   dropCounter = 0;
 }
@@ -198,10 +204,11 @@ function update(time = 0) {
   }
 }
 
-// Current player position
+// Initial player position
 const player = {
   pos: { x: 5, y: 5 },
-  matrix: createPeice("L"),
+  matrix: null,
+  score: 0
 };
 
 // Update tetrimino to the arena board
@@ -232,4 +239,11 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+// Update score
+function updateScore(){
+  document.getElementById('score').innerHTML = player.score
+}
+
+playerReset()
+updateScore()
 update();
